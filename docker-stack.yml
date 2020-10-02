@@ -1,0 +1,89 @@
+version: "3.6"
+services:
+  lidarr:
+    image: linuxserver/lidarr
+    environment:
+      - PUID=501
+      - PGID=20
+      - TZ=America/Sao_Paulo
+    volumes:
+      - lidarr-config:/config
+      - "/Users/luishgo/mp3:/music"
+      - "/Users/luishgo/Downloads:/downloads"
+    ports:
+      - 8686:8686
+    extra_hosts:
+      - "transmission:${HOST_IP}"
+  sonarr:
+    image: linuxserver/sonarr
+    environment:
+      - PUID=501
+      - PGID=20
+      - TZ=America/Sao_Paulo
+    volumes:
+      - sonarr-config:/config
+      - "/Users/luishgo/series:/tv"
+      - "/Users/luishgo/Downloads:/downloads"
+    ports:
+      - 8989:8989
+    extra_hosts:
+      - "transmission:${HOST_IP}"
+  radarr:
+    image: linuxserver/radarr
+    environment:
+      - PUID=501
+      - PGID=20
+      - TZ=America/Sao_Paulo
+    volumes:
+      - radarr-config:/config
+      - "/Users/luishgo/Movies:/movies"
+      - "/Users/luishgo/Downloads:/downloads"
+    ports:
+      - 7878:7878
+    extra_hosts:
+      - "transmission:${HOST_IP}"
+  bazarr:
+    image: linuxserver/bazarr
+    environment:
+      - PUID=501
+      - PGID=20
+      - TZ=America/Sao_Paulo
+    volumes:
+      - bazarr-config:/config
+      - "/Users/luishgo/Movies:/movies"
+      - "/Users/luishgo/series:/tv"
+    ports:
+      - 6767:6767
+    extra_hosts:
+      - "transmission:${HOST_IP}"
+  jackett:
+    image: linuxserver/jackett
+    environment:
+      - PUID=501
+      - PGID=20
+      - TZ=America/Sao_Paulo
+    volumes:
+      - jackett-config:/config
+      - "/Users/luishgo/Downloads:/downloads"
+    ports:
+      - 9117:9117
+#  readarr:
+#    image: linuxserver/readarr
+#    environment:
+#      - PUID=501
+#      - PGID=20
+#      - TZ=America/Sao_Paulo
+#    volumes:
+#      - readarr-config:/config
+#      - "/Users/luishgo/books:/books"
+#      - "/Users/luishgo/Downloads:/downloads"
+#    ports:
+#      - ?
+#    extra_hosts:
+#      - "transmission:${HOST_IP}"
+volumes:
+  lidarr-config:
+  sonarr-config:
+  radarr-config:
+  bazarr-config:
+  jackett-config:
