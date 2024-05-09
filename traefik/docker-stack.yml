@@ -1,0 +1,70 @@
+version: '3.6'
+
+services:
+  app:
+    image: traefik:2.9.10
+    command:
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.swarmMode=true"
+      - "--providers.docker.network=traefik"
+      - "--entrypoints.web.address=:80"
+      - "--entryPoints.web.forwardedHeaders.insecure" # <-- Added this to trust the forwarded headers information (X-Forwarded-*) from Apache
+      #- "--entrypoints.https.address=:443"
+      #- "--entryPoints.https.forwardedHeaders.insecure" # <-- Added this to trust the forwarded headers information (X-Forwarded-*) from Apache
+      - "--entryPoints.traefik.address=:9000"
+      - "--api.insecure=true"
+      - "--accesslog=true"
+      - "--accesslog.bufferingsize=100"
+      #- "--providers.file.filename=/traefik.toml"
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        order: stop-first
+      restart_policy:
+        condition: any
+      placement:
+        constraints: [node.role == manager]
+    ports:
+      - 80:80
+      #- 443:443
+      - 9000:9000
+#      - target: 80
+#        published: 80
+#        protocol: tcp
+#        mode: host
+#      - target: 443
+#        published: 443
+#        protocol: tcp
+#        mode: host
+#      - target: 9000
+#        published: 9000
+#        protocol: tcp
+#        mode: host
+    networks:
+      - traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+#    configs:
+#      - source: traefik.toml
+#        target: /traefik.toml
+#      - source: wildcard.crt
+#        target: /wildcard.crt
+#    secrets:
+#      - source: wildcard.key
+#        target: /wildcard.key
+networks:
+  traefik:
+    driver: overlay
+    external: true
+#configs:
+#  traefik.toml:
+#    external: true
+#    name: ${TRAEFIK_FILE}
+#  wildcard.crt:
+#    external: true
+#    name: ${CERT_FILE}
+#secrets:
+#  wildcard.key:
+#    external: true
+#    name: ${KEY_FILE}
