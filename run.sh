@@ -34,6 +34,14 @@ function run-heimdall() {
     docker stack deploy -c heimdall/docker-stack.yml heimdall
 }
 
+function run-ha() {
+    docker stack deploy -c ha/docker-stack.yml ha
+}
+
+function run-stremio() {
+    docker stack deploy -c stremio/docker-stack.yml stremio
+}
+
 docker context use proxmox
 if [ -z "$1" ]; then
     run-traefik
