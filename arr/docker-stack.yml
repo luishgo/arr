@@ -18,7 +18,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        traefik.http.routers.bazarr.rule: Host(`bazarr.local`)
+        traefik.http.routers.bazarr.rule: Host(`bazarr.home.llgv.qzz.io`)
         traefik.http.services.bazarr.loadbalancer.server.port: 6767
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -37,7 +37,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        traefik.http.routers.radarr.rule: Host(`radarr.local`)
+        traefik.http.routers.radarr.rule: Host(`radarr.home.llgv.qzz.io`)
         traefik.http.services.radarr.loadbalancer.server.port: 7878
   readarr:
     image: lscr.io/linuxserver/readarr:develop
@@ -56,7 +56,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        traefik.http.routers.readarr.rule: Host(`readarr.local`)
+        traefik.http.routers.readarr.rule: Host(`readarr.home.llgv.qzz.io`)
         traefik.http.services.readarr.loadbalancer.server.port: 8787
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -75,7 +75,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        traefik.http.routers.prowlarr.rule: Host(`prowlarr.local`)
+        traefik.http.routers.prowlarr.rule: Host(`prowlarr.home.llgv.qzz.io`)
         traefik.http.services.prowlarr.loadbalancer.server.port: 9696
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
@@ -94,7 +94,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        traefik.http.routers.lidarr.rule: Host(`lidarr.local`)
+        traefik.http.routers.lidarr.rule: Host(`lidarr.home.llgv.qzz.io`)
         traefik.http.services.lidarr.loadbalancer.server.port: 8686
 volumes:
   bazarr-config:

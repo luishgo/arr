@@ -18,7 +18,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        traefik.http.routers.ha.rule: Host(`ha.local`)
+        traefik.http.routers.ha.rule: Host(`ha.home.llgv.qzz.io`)
         traefik.http.services.ha.loadbalancer.server.port: 8123
   music-assistant-server:
     image: ghcr.io/music-assistant/server:latest
@@ -45,7 +45,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        traefik.http.routers.ha.rule: Host(`mas.local`)
+        traefik.http.routers.ha.rule: Host(`mas.home.llgv.qzz.io`)
         traefik.http.services.ha.loadbalancer.server.port: 8095
 volumes:
   config:

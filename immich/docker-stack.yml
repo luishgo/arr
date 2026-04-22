@@ -18,7 +18,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        traefik.http.routers.immich.rule: Host(`immich.local`)
+        traefik.http.routers.immich.rule: Host(`immich.home.llgv.qzz.io`)
         traefik.http.services.immich.loadbalancer.server.port: 2283
 
   machine-learning:

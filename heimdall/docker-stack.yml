@@ -17,7 +17,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        traefik.http.routers.heimdall.rule: Host(`heimdall.local`)
+        traefik.http.routers.heimdall.rule: Host(`heimdall.home.llgv.qzz.io`)
         traefik.http.services.heimdall.loadbalancer.server.port: 80
 volumes:
   config:

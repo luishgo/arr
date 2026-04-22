@@ -22,30 +22,11 @@ function run-traefik() {
     docker stack deploy -c traefik/docker-stack.yml traefik
 }
 
-function run-portainer() {
-    docker stack deploy -c portainer/docker-stack.yml portainer
-}
-
-function run-arr() {
-    docker stack deploy -c arr/docker-stack.yml arr
-}
-
-function run-heimdall() {
-    docker stack deploy -c heimdall/docker-stack.yml heimdall
-}
-
-function run-ha() {
-    docker stack deploy -c ha/docker-stack.yml ha
-}
-
-function run-stremio() {
-    docker stack deploy -c stremio/docker-stack.yml stremio
-}
-
 docker context use proxmox
 if [ -z "$1" ]; then
     run-traefik
     run-portainer
 else
-    eval run-"$1"
+    docker stack deploy -c "$1"/docker-stack.yml "$1"
+    #eval run-"$1"
 fi
