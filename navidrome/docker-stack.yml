@@ -1,0 +1,31 @@
+version: '3.6'
+
+services:
+  app:
+    image: "deluan/navidrome:latest"
+    #user: 1000:1000
+    volumes:
+      - data:/data
+      - /mnt/pve/dados/music:/music
+      - /mnt/pve/stardust/mp3:/stardust-music:ro
+    networks:
+      - traefik
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        traefik.http.routers.navidrome.rule: Host(`navidrome.home.llgv.qzz.io`) || Host(`navidrome.llgv.qzz.io`)
+        traefik.http.services.navidrome.loadbalancer.server.port: 4533
+volumes:
+  data:
+
+networks:
+  traefik:
+    external: true
+
+
+
+
+    

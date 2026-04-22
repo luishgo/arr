@@ -1,0 +1,27 @@
+version: '3.6'
+
+services:
+  hub:
+    image: "henrygd/beszel:latest"
+    volumes:
+      - data:/beszel_data
+    environment:
+      - APP_URL=http://beszel.home.llgv.qzz.io
+    networks:
+      - traefik
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        traefik.http.routers.beszel-hub.rule: Host(`beszel.home.llgv.qzz.io`)
+        traefik.http.services.beszel-hub.loadbalancer.server.port: 8090
+volumes:
+  data:
+
+networks:
+  traefik:
+    external: true
+
+    

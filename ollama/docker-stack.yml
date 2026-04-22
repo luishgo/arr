@@ -1,0 +1,46 @@
+version: '3.6'
+
+services:
+  app:
+    image: "ollama/ollama:latest"
+    volumes:
+      - data:/root/.ollama
+      - /dev/dri:/dev/dri
+    networks:
+      - internal
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      # labels:
+      #   traefik.http.routers.ollama.rule: Host(`ollama.home.llgv.qzz.io`)
+      #   traefik.http.services.ollama.loadbalancer.server.port: 11434
+
+  webui:
+    image: "ghcr.io/open-webui/open-webui:main"
+    volumes:
+      - webui:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://app:11434
+    networks:
+      - traefik
+      - internal
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        traefik.http.routers.webui.rule: Host(`ollama.home.llgv.qzz.io`)
+        traefik.http.services.webui.loadbalancer.server.port: 8080
+
+volumes:
+  data:
+  webui:
+
+networks:
+  traefik:
+    external: true
+  internal:
+
