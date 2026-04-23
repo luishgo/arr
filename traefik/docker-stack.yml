@@ -1,91 +1,91 @@
 version: "3.8"
 
 services:
-  app:
-    image: traefik:v3.6
-    command:
-      - --log.level=INFO
-      - --accesslog=true
-      - --api.dashboard=true
-      - --api.insecure=false
+    app:
+        image: traefik:v3.6
+        command:
+            - --log.level=INFO
+            - --accesslog=true
+            - --api.dashboard=true
+            - --api.insecure=false
 
-      # Entrypoints
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --entrypoints.dashboard.address=:8080
+            # Entrypoints
+            - --entrypoints.web.address=:80
+            - --entrypoints.websecure.address=:443
+            - --entrypoints.dashboard.address=:8080
 
-      # Redireciona HTTP -> HTTPS
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.web.http.redirections.entrypoint.scheme=https
-      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+            # Redireciona HTTP -> HTTPS
+            - --entrypoints.web.http.redirections.entrypoint.to=websecure
+            - --entrypoints.web.http.redirections.entrypoint.scheme=https
+            - --entrypoints.web.http.redirections.entrypoint.permanent=true
 
-      # Provider Swarm
-      - --providers.swarm.endpoint=unix:///var/run/docker.sock
-      - --providers.swarm.watch=true
-      - --providers.swarm.exposedbydefault=true
-      - --providers.swarm.network=traefik
+            # Provider Swarm
+            - --providers.swarm.endpoint=unix:///var/run/docker.sock
+            - --providers.swarm.watch=true
+            - --providers.swarm.exposedbydefault=true
+            - --providers.swarm.network=traefik
 
-      - --certificatesresolvers.cloudflare.acme.email=luishgo@gmail.com
-      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
-      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
-      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+            - --certificatesresolvers.cloudflare.acme.email=luishgo@gmail.com
+            - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+            - --certificatesresolvers.cloudflare.acme.dnschallenge=true
+            - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
 
-      - --entrypoints.websecure.http.tls=true
-      - --entrypoints.websecure.http.tls.certresolver=cloudflare
-      - --entrypoints.websecure.http.tls.domains[0].main=home.llgv.qzz.io
-      - --entrypoints.websecure.http.tls.domains[0].sans=*.home.llgv.qzz.io
+            - --entrypoints.websecure.http.tls=true
+            - --entrypoints.websecure.http.tls.certresolver=cloudflare
+            - --entrypoints.websecure.http.tls.domains[0].main=home.llgv.qzz.io
+            - --entrypoints.websecure.http.tls.domains[0].sans=*.home.llgv.qzz.io
 
-      # Let's Encrypt via TLS-ALPN-01
-      #- --certificatesresolvers.le.acme.email=luishgo@gmail.com
-      #- --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
-      #- --certificatesresolvers.le.acme.tlschallenge=true
+            # Let's Encrypt via TLS-ALPN-01
+            #- --certificatesresolvers.le.acme.email=luishgo@gmail.com
+            #- --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+            #- --certificatesresolvers.le.acme.tlschallenge=true
 
-      # Opcional para testes, evita rate limit
-      # - --certificatesresolvers.le.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+            # Opcional para testes, evita rate limit
+            # - --certificatesresolvers.le.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
 
-    ports:
-      - 80:80
-      - 443:443
-    environment:
-      - CF_DNS_API_TOKEN=cfut_BHABeKF9tooXcBFQIoErOZsCV1VkrVEdg8tn2Z7uabf2f583
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - letsencrypt:/letsencrypt
+        ports:
+            - 80:80
+            - 443:443
+        env_file:
+            - ./cf.env
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - letsencrypt:/letsencrypt
 
-    networks:
-      - traefik
+        networks:
+            - traefik
 
-    deploy:
-      mode: replicated
-      replicas: 1
-      update_config:
-        parallelism: 1
-        order: stop-first
-      restart_policy:
-        condition: any
-      placement:
-        constraints:
-          - node.role == manager
-      labels:
-        - traefik.enable=true
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                order: stop-first
+            restart_policy:
+                condition: any
+            placement:
+                constraints:
+                    - node.role == manager
+            labels:
+                - traefik.enable=true
 
-        # Dashboard
-        - traefik.http.routers.traefik.rule=Host(`traefik.home.llgv.qzz.io`)
-        - traefik.http.routers.traefik.entrypoints=websecure
-        - traefik.http.routers.traefik.tls=true
-        - traefik.http.routers.traefik.tls.certresolver=cloudflare
-        - traefik.http.routers.traefik.service=api@internal
+                # Dashboard
+                - traefik.http.routers.traefik.rule=Host(`traefik.home.llgv.qzz.io`)
+                - traefik.http.routers.traefik.entrypoints=websecure
+                - traefik.http.routers.traefik.tls=true
+                - traefik.http.routers.traefik.tls.certresolver=cloudflare
+                - traefik.http.routers.traefik.service=api@internal
 
-        # Basic auth no dashboard
-        - traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$apr1$$ppXSMj3k$$zAvK.27XhuJcAzDNHwG7W/
-        - traefik.http.routers.traefik.middlewares=traefik-auth
+                # Basic auth no dashboard
+                - traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$apr1$$ppXSMj3k$$zAvK.27XhuJcAzDNHwG7W/
+                - traefik.http.routers.traefik.middlewares=traefik-auth
 
-        # Dica de porta interna exigida no Swarm
-        - traefik.http.services.traefik.loadbalancer.server.port=8080
+                # Dica de porta interna exigida no Swarm
+                - traefik.http.services.traefik.loadbalancer.server.port=8080
 
 networks:
-  traefik:
-    external: true
+    traefik:
+        external: true
 
 volumes:
-  letsencrypt:
+    letsencrypt:
