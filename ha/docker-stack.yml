@@ -23,10 +23,10 @@ services:
     music-assistant-server:
         image: ghcr.io/music-assistant/server:latest
         privileged: true
-        # network_mode: host
+        network_mode: host
         networks:
             - traefik
-            # - outside
+            - outside
         volumes:
             - data:/data/
         # privileged caps (and security-opt) needed to mount smb folders within the container
