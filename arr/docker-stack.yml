@@ -39,14 +39,14 @@ services:
       labels:
         traefik.http.routers.radarr.rule: Host(`radarr.home.llgv.qzz.io`)
         traefik.http.services.radarr.loadbalancer.server.port: 7878
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Sao_Paulo
     volumes:
-      - readarr-config:/config
+      - sonarr-config:/config
       - /mnt/pve/dados:/dados
     networks:
       - traefik
@@ -56,8 +56,8 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        traefik.http.routers.readarr.rule: Host(`readarr.home.llgv.qzz.io`)
-        traefik.http.services.readarr.loadbalancer.server.port: 8787
+        traefik.http.routers.sonarr.rule: Host(`sonarr.home.llgv.qzz.io`)
+        traefik.http.services.sonarr.loadbalancer.server.port: 8989
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     environment:
@@ -99,7 +99,7 @@ services:
 volumes:
   bazarr-config:
   radarr-config:
-  readarr-config:
+  sonarr-config:
   prowlarr-config:
   lidarr-config:
 networks:
