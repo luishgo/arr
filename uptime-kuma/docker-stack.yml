@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  app:
+    image: louislam/uptime-kuma:2.2.1-slim
+    volumes:
+      - data:/app/data  # Configuring persistent storage
+    environment:
+      - TZ=America/Sao_Paulo  # Set the timezone (change to your preferred local timezone so monitoring times are the same)
+      - UMASK=0022  # Set your file permissions manually
+    networks:
+      - traefik
+    deploy:
+      labels:
+        - traefik.http.routers.uptime-kuma.rule=Host(`uptime.home.llgv.qzz.io`)
+        - traefik.http.services.uptime-kuma.loadbalancer.server.port=3001
+volumes:
+  data:
+
+networks:
+  traefik:
+    external: true
